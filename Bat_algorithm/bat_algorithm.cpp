@@ -1,8 +1,9 @@
 #include "bat_algorithm.h"
 #include <time.h>
 
+//Checked
 void Bat_algorithm::find_best_bat() {
-	int current_bat = 1, best_bat = 0;
+	int best_bat = 0, current_bat = 1;
 
 	for (; current_bat < population; current_bat++)
 		if (function_values[current_bat] < function_values[best_bat])
@@ -10,12 +11,12 @@ void Bat_algorithm::find_best_bat() {
 
 	int best_bat_index = best_bat * dimension;
 	for (int i = 0; i < dimension; i++)
-		best_bat_values.push_back(bat_positions.at(best_bat_index + i));	
+		best_bat_values.push_back(bat_positions[best_bat_index + i]);	
 
 	min_value = function_values[best_bat];
 }
 
-
+//Checked
 void Bat_algorithm::bats_init() {
 	for (int i = 0; i < population; i++) {
 		freq.push_back(freq_min);
@@ -27,16 +28,13 @@ void Bat_algorithm::bats_init() {
 			bat_positions.push_back(lower_bound + (upper_bound - lower_bound) * rnd);
 		}
 
-		vector<double> bat(dimension);
-		std::copy(bat_positions.begin() + i*dimension, bat_positions.begin() + (i+1)*dimension, bat.begin());
-
-		function_values[i] = function(bat_positions.begin() + i*dimension, bat_positions.begin() + (i + 1)*dimension);
+		function_values.push_back(function(bat_positions.begin() + i*dimension, bat_positions.begin() + (i + 1)*dimension));
 	}
 
 	find_best_bat();
 }
 
-
+//Checked
 void Bat_algorithm::cmp_position2bound(vector<double> &bat_positions) {
 	for (auto it = bat_positions.begin(); it != bat_positions.end(); ++it)
 		if (*it < lower_bound)
@@ -51,6 +49,8 @@ void Bat_algorithm::move_bats() {
 	double rnd;
 	double func_new;
 	vector<double> curr_positions;
+
+	bats_init();
 
 	srand(time(NULL));
 	for (int it = 0; it < iterations; ++it) {

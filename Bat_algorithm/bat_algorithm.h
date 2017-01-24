@@ -9,10 +9,11 @@ public:
 
 	Bat_algorithm() {};
 
-	Bat_algorithm(int population, int iterations, double freq_min, double freq_max, 
+	Bat_algorithm(int population, int iterations, int dimension, double freq_min, double freq_max, 
 		double lower_bound, double upper_bound, double loudness = 0.9, double pulse_rate = 0.9) {
 		this->population = population;
 		this->iterations = iterations;
+		this->dimension = dimension;
 		this->freq_min = freq_min;
 		this->freq_max = freq_max;
 		this->lower_bound = lower_bound;
@@ -21,16 +22,12 @@ public:
 		loudness = 0.9;
 		pulse_rate = 0.9;
 		alpha = 0.9;
-
-		bats_init();
 	}
 
-	virtual double function(double_iterator start_pos, double_iterator end_pos) = 0;
+	virtual double function(const double_iterator begin, const double_iterator end) = 0;
 	void move_bats();
 	
-	double get_result() {
-		return min_value;
-	}
+	double get_result() {return min_value;}
 
 protected:
 	void bats_init();
