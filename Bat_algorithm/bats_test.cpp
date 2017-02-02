@@ -8,7 +8,7 @@
 using namespace std;
 
 int main() {
-	Sphere sphere(30, 100, 50, 0, 1, -100, 100, 2);
+	Sphere sphere(2, 2, 2, 0, 1, -100, 100, 2);
 	Ackley ackley(30, 100, 10, 0, 1, -32.768, 32.768, 2);
 	Griewank griewank(50, 100, 50, 0, 1, -600, 600, 2);
 	Rastrigin rastrigin(50, 100, 30, 0, 1, -5.12, 5.12, 2);

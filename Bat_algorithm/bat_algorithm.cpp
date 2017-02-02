@@ -49,6 +49,8 @@ void Bat_algorithm::find_best_bat() {
 
 void Bat_algorithm::bats_init() {
 	double rnd, loudness;
+	srand(time(NULL));
+
 	for (int i = 0; i < dimension; i++)
 		best_bat.push_back(lower_bound);
 
@@ -66,7 +68,7 @@ void Bat_algorithm::bats_init() {
 		rnd = static_cast<double> (rand()) / static_cast<double> (RAND_MAX);
 		loudness = loudness_max - rnd;
 		
-		bats_loudness.push_back(rnd);
+		bats_loudness.push_back(loudness);
 
 		//initial pulse rate is close to 0
 		rnd = static_cast<double> (rand()) / static_cast<double> (RAND_MAX) * 0.01;
@@ -92,8 +94,13 @@ void Bat_algorithm::adjust_bat_parameters(const int bat_num, vector<double> &cur
 	int curr_bat_beg = bat_num * dimension;
 
 	for (int j = 0; j < dimension; ++j) {
+		//add new random value mfaka
+		double loud_coef = static_cast<double> (rand()) / static_cast<double> (RAND_MAX);
+		if (loud_coef > 0.5)
+			loud_coef = 1;
+		else loud_coef = -1;
 		bat_velocities[curr_bat_beg + j] += (bats_positions[curr_bat_beg + j] - best_bat[j])*freq[bat_num];
-		curr_positions[j] = bats_positions[curr_bat_beg + j] + bat_velocities[curr_bat_beg + j];		//Here better too
+		curr_positions[j] = bats_positions[curr_bat_beg + j] + loud_coef * bat_velocities[curr_bat_beg + j];		//Here better too
 	}
 	cmp_position2bound(curr_positions);
 }
@@ -140,10 +147,10 @@ void Bat_algorithm::check_new_solution(const int curr_bat, const int iteration, 
 		function_values[curr_bat] = func_new;
 		bats_loudness[curr_bat] *= alpha;
 		bats_pulse_rate[curr_bat] *= (1 - exp(-alpha * iteration));
-	}
 
-	//check for the best global solution
-	check_curr_to_best(func_new, curr_bat_positions);
+		//check for the best global solution
+		check_curr_to_best(func_new, curr_bat_positions);
+	}
 }
 
 
