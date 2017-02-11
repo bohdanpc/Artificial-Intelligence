@@ -6,6 +6,40 @@
 
 using namespace std;
 
+double gaussian_random(double mue, double sigma) {
+	double x1, x2, w, y;
+
+	do {
+		x1 = 2.0 * rand() / (RAND_MAX + 1) - 1.0;
+		x2 = 2.0 * rand() / (RAND_MAX + 1) - 1.0;
+		w = x1 * x1 + x2 * x2;
+	} while (w >= 1.0);
+	double llog = log(w);
+	w = sqrt((-2.0 * llog) / w);
+	y = x1 * w;
+
+	return mue + sigma * y;
+}
+
+// tgammal prototype is in <math.h>
+//lambda in range [0.3, 1.99], 
+double mantegna_random(double lambda) {
+	long double sigmaX, sigmaY = 1;
+	double x, y;
+	long double tg = tgammal(lambda + 1);
+	sigmaX = tgammal(lambda + 1) * sin(M_PI * lambda / 2);
+	double divider = tgammal((lambda) / 2) * lambda * pow(2., (lambda - 1) / 2);
+	sigmaX /= divider;
+	sigmaX = pow(sigmaX, (long double)1. / lambda);
+
+	x = gaussian_random(0, sigmaX);
+	y = fabs(gaussian_random(0, 1.));
+
+	return x / pow(y, 1. / lambda);
+
+}
+
+
 Bat_algorithm::Bat_algorithm(int population, int iterations, int dimension, double freq_min, double freq_max, 
 							 double lower_bound, double upper_bound, double loudness_max) {
 	this->population = population;
@@ -66,7 +100,7 @@ void Bat_algorithm::bats_init() {
 		rnd = static_cast<double> (rand()) / static_cast<double> (RAND_MAX);
 		loudness = loudness_max - rnd;
 		
-		bats_loudness.push_back(rnd);
+		bats_loudness.push_back(loudness);
 
 		//initial pulse rate is close to 0
 		rnd = static_cast<double> (rand()) / static_cast<double> (RAND_MAX) * 0.01;
@@ -143,7 +177,7 @@ void Bat_algorithm::check_new_solution(const int curr_bat, const int iteration, 
 	}
 
 	//check for the best global solution
-	check_curr_to_best(func_new, curr_bat_positions);
+	//check_curr_to_best(func_new, curr_bat_positions);
 }
 
 
@@ -154,9 +188,47 @@ void Bat_algorithm::move_bats() {
 
 	for (int iteration = 0; iteration < iterations; ++iteration) {
 		for (int curr_bat = 0; curr_bat < population; ++curr_bat) {
-			adjust_bat_parameters(curr_bat, curr_bat_positions);
-			gen_local_sol_around_best(curr_bat, curr_bat_positions);
+			//adjust_bat_parameters(curr_bat, curr_bat_positions);
+			//gen_local_sol_around_best(curr_bat, curr_bat_positions);
+			//check_new_solution(curr_bat, iteration, curr_bat_positions);
+
+			//START ADJUSTING bat's velocities, frequencies, positions
+			double rnd = static_cast<double> (rand()) / static_cast<double> (RAND_MAX);
+			freq[curr_bat] = (freq_min + (freq_max - freq_min) * rnd);
+		
+			int curr_bat_beg = curr_bat * dimension;
+			for (int j = 0; j < dimension; ++j) {
+				
+				bat_velocities[curr_bat_beg + j] += (best_bat[j] - bats_positions[curr_bat_beg + j])*freq[curr_bat];
+				bats_positions[curr_bat_beg + j] += bat_velocities[curr_bat_beg + j];		//Here better too
+				curr_bat_positions[j] = bats_positions[curr_bat_beg + j];
+			}
+			cmp_position2bound(curr_bat_positions);
+			//END ADJUSTING
+
+			//BEGIN LOCAL SEARCH PART
+			rnd = static_cast<double> (rand()) / static_cast<double> (RAND_MAX);
+			if (rnd > bats_pulse_rate[curr_bat]) {
+				//random decimal in range [-1; 1]
+				double loud_coef = static_cast<double> (rand()) / static_cast<double> (RAND_MAX / 2) - 1;
+				for (int j = 0; j < dimension; ++j)
+					curr_bat_positions[j] = best_bat[j] + loud_coef * get_average_loudness();
+			}
+			//END LOCAL SEARCH PART
+
+			//GENERATE NEW SOL BY FLYING RANDOMLY
+			double b_min = 0.3, b_max = 1.99;
+			double w = (b_max - b_min) / (loudness_max);
+			double lambda = b_min + w * bats_loudness[curr_bat];
+
+			for (int j = 0; j < dimension; j++) {
+				curr_bat_positions[j] += (best_bat[j] - curr_bat_positions[j]) * mantegna_random(lambda);
+			}
+			//END GENE+RATING NEW SOLUTION
+
 			check_new_solution(curr_bat, iteration, curr_bat_positions);
 		}
+
+		find_best_bat();
 	}
 }
