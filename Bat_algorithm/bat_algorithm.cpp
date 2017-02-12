@@ -105,6 +105,16 @@ void Bat_algorithm::bats_init() {
 	find_best_bat();
 }
 
+/*
+* Description:
+*	return random bat excluding the current one
+*/
+int Bat_algorithm::select_rand_bat(const int curr_bat) {
+	int rand_bat = rand() % population;
+	while (rand_bat == curr_bat)
+		rand_bat = rand() % population;
+	return rand_bat;
+}
 
 void Bat_algorithm::cmp_position2bound(const double_iterator begin, const double_iterator end) {
 	for (vector<double>::iterator it = begin; it != end; ++it)
@@ -137,14 +147,6 @@ void Bat_algorithm::update_bat_position(const int bat_num, vector<double> &one_b
 }
 
 
-double Bat_algorithm::get_average_loudness() {
-	double res = 0;
-	for (int i = 0; i < population; i++)
-		res += bat_loudness[i];
-	return res;
-}
-
-
 void Bat_algorithm::check_curr2best(const double func_new, const vector<double> &one_bat_pos) {
 	if (func_new < min_value) {
 		for (int j = 0; j < dimension; ++j)
@@ -171,16 +173,14 @@ void Bat_algorithm::check_new_solution(const int bat_num, const int iter, vector
 	check_curr2best(func_new, one_bat_pos);
 }
 
-/*
-* Description:
-*	random bat except the current one
-*/
-int Bat_algorithm::select_rand_bat(const int curr_bat) {
-	int rand_bat = rand() % population;
-	while (rand_bat == curr_bat)
-		rand_bat = rand() % population;
-	return rand_bat;
+
+double Bat_algorithm::get_average_loudness() {
+	double res = 0;
+	for (int i = 0; i < population; i++)
+		res += bat_loudness[i];
+	return res;
 }
+
 
 /*
 * Description:
@@ -205,10 +205,6 @@ void Bat_algorithm::move_bats() {
 	bats_init();
 
 	for (int iter = 0; iter < iterations; ++iter) {
-		//DEBUG OUTPUT
-		if (iter % 500 == 0)
-			cout << iter << endl;
-		//DEBUG PARAM END
 		for (int curr_bat = 0; curr_bat < population; ++curr_bat) {
 			update_bat_position(curr_bat, one_bat_pos);
 			local_search(curr_bat, one_bat_pos);
