@@ -206,7 +206,7 @@ void Bat_algorithm::move_bats() {
 
 	for (int iter = 0; iter < iterations; ++iter) {
 		//DEBUG OUTPUT
-		if (iter % 200 == 0)
+		if (iter % 500 == 0)
 			cout << iter << endl;
 		//DEBUG PARAM END
 		for (int curr_bat = 0; curr_bat < population; ++curr_bat) {

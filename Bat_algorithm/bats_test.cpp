@@ -11,15 +11,17 @@ using std::endl;
 
 int main() {
 	srand((unsigned int) time(NULL));
-	//population,  iterations,  dimension,    freq_min,    freq_max,
-	//lower_bound, upper_bound, loudness_max, loudness_min, 
-	//pulse_rate_max, pulse_rate_min
-
-	Sphere sphere(30, 500, 50, 0, 2, -100, 100, 1, 0.5, 0.7, 0.1);
-	Ackley ackley(30, 1000, 10, 0, 1, -32.768, 32.768, 0.5, 0.1, 0.7, 0.1);
-	Griewank griewank(50, 1000, 2, 0, 1, -600, 600, 0.9, 0.6, 0.7, 0.1);	//50
-	Rastrigin rastrigin(50, 1000, 2, 0, 1, -5.12, 5.12, 0.9, 0.6, 0.7, 0.1);	//30
-	Rosenbrock rosenbrock(50, 1000, 2, 0, 1, -5, 10, 0.9, 0.6, 0.7, 0.1);	//30
+	
+	/* Parameters list
+	* population,  iterations,  dimension,    freq_min,    freq_max,
+	* lower_bound, upper_bound, loudness_max, loudness_min, 
+	* pulse_rate_max, pulse_rate_min 
+	*/
+	Sphere sphere(50, 5000, 50, 0, 5, -100, 100, 1, 0.5, 0.7, 0.1);
+	Ackley ackley(10, 5000, 10, 0, 1, -32.768, 32.768, 1, 0.1, 0.7, 0.1);
+	Griewank griewank(50, 5000, 50, 0, 2, -600, 600, 1, 0.1, 0.7, 0.1);	
+	Rastrigin rastrigin(30, 5000, 30, 0, 5, -5.12, 5.12, 0.9, 0.3, 0.7, 0.1);	
+	Rosenbrock rosenbrock(30, 5000, 30, 0, 2, -5, 10, 10, 0.1, 0.7, 0.1);	
 
 	sphere.move_bats();
 	cout << "Sphere function, minimum: " << sphere.get_result() << endl;
