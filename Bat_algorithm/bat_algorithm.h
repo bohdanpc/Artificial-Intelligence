@@ -17,28 +17,25 @@ public:
 	double get_dimension();
 
 private:
-	int Bat_algorithm::select_rand_bat(const int curr_bat);
+	int select_rand_bat(const int curr_bat);
 
 	void bats_init();
 	void find_best_bat();
-	//check if the current function value is better than global minimum value
-	void check_curr_to_best(const double func_new, const vector<double> &curr_positions);
+	void check_curr2best(const double func_new, const vector<double> &curr_positions);
 	void cmp_position2bound(const double_iterator begin, const double_iterator end);
 
 	void local_search(const int bat_num, vector<double> &parameters);
-	//update velocities and generate new possible solution
+	//generate new possible solution
 	void update_bat_position(const int bat_num, vector<double> &parameters);
 	double get_average_loudness();
-	void gen_local_sol_around_best(const int curr_bat, vector<double> &curr_bat_positions);
 	void check_new_solution(const int curr_bat, const int iteration, vector<double> &curr_bat_positions);
 
-	vector<double> bat_freq;
 	vector<double> fitness_func;
 	vector<double> bat_best;
 	vector<double> bat_loudness;
 	vector<double> bat_pulse_rate;
 
-	//2-dimensional array: [amount of bats] [amount of dimensions]
+	//2-dimensional array: [count of bats] [count of dimensions]
 	vector<double> bat_position;
 
 	int dimension;
