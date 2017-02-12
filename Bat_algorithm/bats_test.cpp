@@ -10,11 +10,11 @@ using namespace std;
 
 int main() {
 	srand(time(NULL));
-	Sphere sphere(30, 300, 50, 0, 2, -100, 100, 2);
-	Ackley ackley(40, 500, 10, 0, 0.5, -32.768, 32.768, 0.5);
-	Griewank griewank(50, 100, 50, 0, 1, -600, 600, 2);
-	Rastrigin rastrigin(50, 100, 30, 0, 1, -5.12, 5.12, 2);
-	Rosenbrock rosenbrock(50, 100, 30, 0, 1, -5, 10, 2);
+	Sphere sphere(50, 2000, 50, 0, 2, -100, 100, 2);
+	Ackley ackley(100, 2000, 10, 0, 1, -32.768, 32.768, 0.5);
+	Griewank griewank(50, 1000, 50, 0, 1, -600, 600, 2);
+	Rastrigin rastrigin(50, 1000, 30, 0, 1, -5.12, 5.12, 2);
+	Rosenbrock rosenbrock(50, 1000, 30, 0, 1, -5, 10, 2);
 
 	sphere.move_bats();
 	cout << "Sphere function, minimum: " << sphere.get_result() << endl;

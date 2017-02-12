@@ -187,6 +187,8 @@ void Bat_algorithm::move_bats() {
 	bats_init();
 
 	for (int iteration = 0; iteration < iterations; ++iteration) {
+		if (iteration % 200 == 0)
+			cout << iteration << endl;
 		for (int curr_bat = 0; curr_bat < population; ++curr_bat) {
 			int rand_bat = rand() % population;
 			while (rand_bat == curr_bat)
@@ -197,14 +199,14 @@ void Bat_algorithm::move_bats() {
 
 			int curr_bat_beg = curr_bat * dimension;
 			if (function_values[rand_bat] < function_values[curr_bat])
-				for (int j = 0; j < dimension; j++)
+				for (int j = 0; j < dimension; j++) 
 					curr_bat_positions[j] = bats_positions[curr_bat_beg + j] +
-					(best_bat[j] - bats_positions[curr_bat_beg + j]) * f1 +
-					(bats_positions[rand_bat * dimension + j] - bats_positions[curr_bat_beg + j])*f2;
+						(best_bat[j] - bats_positions[curr_bat_beg + j]) * f1 +
+						(bats_positions[rand_bat * dimension + j] - bats_positions[curr_bat_beg + j])*f2;
 			else
-				for (int j = 0; j < dimension; j++)
+				for (int j = 0; j < dimension; j++) 
 					curr_bat_positions[j] = bats_positions[curr_bat_beg + j] + (best_bat[j] - bats_positions[curr_bat_beg + j]) * f1;
-
+					
 			cmp_position2bound(curr_bat_positions.begin(), curr_bat_positions.end());
 			//END ADJUSTING
 
@@ -223,20 +225,19 @@ void Bat_algorithm::move_bats() {
 			//END LOCAL SEARCH PART
 
 			//CHECK NEW SOLUTION
-			curr_bat_beg = curr_bat * dimension;
 			double func_new = function(curr_bat_positions.begin(), curr_bat_positions.end());
 			//random value in range [0, loudness_max]
 			rnd = static_cast<double> (rand()) / static_cast<double> (RAND_MAX) * loudness_max;
 
 			if (rnd < bats_loudness[curr_bat] && func_new <= function_values[curr_bat]) {
 				for (int j = 0; j < dimension; j++)
-					bats_positions[curr_bat + j] = curr_bat_positions[j];
+					bats_positions[curr_bat_beg + j] = curr_bat_positions[j];
 				function_values[curr_bat] = func_new;
-				bats_loudness[curr_bat] = loudness_max / (1.0 - iterations) * (iteration - iterations);
-				bats_pulse_rate[curr_bat] = (0. - 1) / (1. - iterations) * (iteration - iterations) + 1;
+				bats_loudness[curr_bat] = (loudness_max / (1.0 - iterations)) * (iteration - iterations);
+				bats_pulse_rate[curr_bat] = ((0. - 1) / (1. - iterations)) * (iteration - iterations) + 1;
 			}
 
-			if (function_values[curr_bat] < min_value) {
+			if (func_new < min_value) {
 				for (int j = 0; j < dimension; j++)
 					best_bat[j] = curr_bat_positions[j];
 				min_value = func_new;
