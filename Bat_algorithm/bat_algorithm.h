@@ -21,7 +21,7 @@ private:
 
 	void bats_init();
 	void find_best_bat();
-	void check_curr2best(const double func_new, const vector<double> &curr_positions);
+	void check_curr2best(const double func_new, const vector<double> &curr_positions, const int iter);
 	void cmp_position2bound(const double_iterator begin, const double_iterator end);
 
 	void local_search(const int bat_num, vector<double> &parameters);
@@ -51,7 +51,7 @@ private:
 	double pulse_rate_max;
 	double pulse_rate_min;
 
-	const double lambda_min = 0.3;
-	const double lambda_max = 1.99;
+	double lambda_min;
+	double lambda_max; 
 	double mantegna_scale;
 };

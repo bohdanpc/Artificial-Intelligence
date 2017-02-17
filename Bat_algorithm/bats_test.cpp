@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include "time.h"
 #include "Sphere.h"
 #include "Ackley.h"
@@ -6,8 +7,7 @@
 #include "Rastrigin.h"
 #include "Rosenbrock.h"
 
-using std::cout;
-using std::endl;
+using namespace std;
 
 int main() {
 	srand((unsigned int) time(NULL));
@@ -17,13 +17,14 @@ int main() {
 	* lower_bound, upper_bound, loudness_max, loudness_min, 
 	* pulse_rate_max, pulse_rate_min 
 	*/
-	Sphere sphere(30, 1500, 50, 0, 5, -100, 100, 1, 0.5, 0.7, 0.1);
+	Sphere sphere(300, 7500, 50, 0, 5, -100, 100, 1, 0.5, 0.7, 0.1);
 	Ackley ackley(30, 1500, 10, 0, 1, -32.768, 32.768, 1, 0.1, 0.7, 0.1);
 	Griewank griewank(50, 1500, 50, 0, 2, -600, 600, 1, 0.1, 0.7, 0.1);	
 	Rastrigin rastrigin(30, 1500, 30, 0, 5, -5.12, 5.12, 0.9, 0.3, 0.7, 0.1);	
 	Rosenbrock rosenbrock(50, 1500, 30, 0, 2, -5, 10, 10, 0.1, 0.7, 0.1);	
 
 	sphere.move_bats();
+	cout << scientific;
 	cout << "Sphere function, minimum: " << sphere.get_result() << endl;
 
 	ackley.move_bats();

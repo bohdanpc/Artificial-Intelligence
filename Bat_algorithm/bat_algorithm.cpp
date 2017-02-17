@@ -1,8 +1,10 @@
 #define _USE_MATH_DEFINES
-#include <cmath>
+#define _TR1_C99
+
 #include "bat_algorithm.h"
 #include <time.h>
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 
@@ -19,24 +21,24 @@ double gaussian_random(double mue, double sigma) {
 
 	return mue + sigma * y;
 }
-
-// tgammal prototype is in <math.h>
-//input value in range [0.3, 1.99], 
-double mantegna_random(double lambda) {
-	long double sigmaX, sigmaY = 1;
-	double x, y;
-	long double tg = tgammal(lambda + 1);
-	sigmaX = tgammal(lambda + 1) * sin(M_PI * lambda / 2);
-	double divider = tgammal((lambda) / 2) * lambda * pow(2., (lambda - 1) / 2);
-	sigmaX /= divider;
-	sigmaX = pow(sigmaX, (long double)1. / lambda);
-
-	x = gaussian_random(0, sigmaX);
-	y = fabs(gaussian_random(0, 1.));
-
-	return x / pow(y, 1. / lambda);
-}
-
+//
+//// tgammal prototype is in <math.h>
+////input value in range [0.3, 1.99], 
+//double mantegna_random(double lambda) {
+//	long double sigmaX, sigmaY = 1;
+//	double x, y;
+//	long double tg = tgammal(lambda + 1);
+//	sigmaX = tgammal(lambda + 1) * sin(M_PI * lambda / 2);
+//	double divider = tgammal((lambda) / 2) * lambda * pow(2., (lambda - 1) / 2);
+//	sigmaX /= divider;
+//	sigmaX = pow(sigmaX, (long double)1. / lambda);
+//
+//	x = gaussian_random(0, sigmaX);
+//	y = fabs(gaussian_random(0, 1.));
+//
+//	return x / pow(y, 1. / lambda);
+//}
+//
 
 Bat_algorithm::Bat_algorithm(int population, int iterations, int dimension, double freq_min, double freq_max, 
 							 double lower_bound, double upper_bound, double loudness_max, double loudness_min, 
@@ -62,6 +64,9 @@ Bat_algorithm::Bat_algorithm(int population, int iterations, int dimension, doub
 
 	bat_pulse_rate.resize(population, pulse_rate_min);
 	bat_loudness.resize(population, loudness_max);
+
+	lambda_min = 0.3;
+	lambda_max = 1.99;
 }
 
 double Bat_algorithm::get_result() {
@@ -147,8 +152,11 @@ void Bat_algorithm::update_bat_position(const int bat_num, vector<double> &one_b
 }
 
 
-void Bat_algorithm::check_curr2best(const double func_new, const vector<double> &one_bat_pos) {
+void Bat_algorithm::check_curr2best(const double func_new, const vector<double> &one_bat_pos, const int iter) {
 	if (func_new < min_value) {
+#ifdef _DEBUG
+		cout << "Iteration: " << iter << endl;
+#endif
 		for (int j = 0; j < dimension; ++j)
 			bat_best[j] = one_bat_pos[j];
 		min_value = func_new;
@@ -170,15 +178,17 @@ void Bat_algorithm::check_new_solution(const int bat_num, const int iter, vector
 	
 	}
 	//compare current solution with the global best solution
-	check_curr2best(func_new, one_bat_pos);
+	check_curr2best(func_new, one_bat_pos, iter);
 }
 
 
 double Bat_algorithm::get_average_loudness() {
-	double res = 0;
+	/*double res = 0;
 	for (int i = 0; i < population; i++)
 		res += bat_loudness[i];
-	return res;
+	*/
+	return 1;
+	//return res;
 }
 
 
@@ -192,9 +202,11 @@ void Bat_algorithm::local_search(const int bat_num, vector<double> &one_bat_pos)
 	double rnd = static_cast<double> (rand()) / RAND_MAX;
 
 	if (rnd > bat_pulse_rate[bat_num]) {
-		double lambda = lambda_min + mantegna_scale * (bat_loudness[bat_num] - loudness_min);
-		for (int j = 0; j < dimension; ++j)
-			one_bat_pos[j] = bat_best[j] + mantegna_random(lambda) * get_average_loudness();
+		//double lambda = lambda_min + mantegna_scale * (bat_loudness[bat_num] - loudness_min);
+		for (int j = 0; j < dimension; ++j) {
+			double rnd1 = static_cast<double> (rand()) / (RAND_MAX / 2) - 1.0;
+			one_bat_pos[j] = bat_best[j] + /*mantegna_random(lambda)*/rnd1 * get_average_loudness();
+		}
 	}
 }
 
